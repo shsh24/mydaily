@@ -90,7 +90,11 @@ public class ZipMain {
 		Enumeration<ZipEntry> jarEntries = (Enumeration<ZipEntry>) zipInFile.entries();
 		while (jarEntries.hasMoreElements()) {
 			ZipEntry zipEntry = jarEntries.nextElement();
-			zipEntry = new ZipEntry(zipEntry.getName()); // Exception: invalid entry compressed size (expected <num1> but got <num2> bytes)
+			// Here zipEntry must be re-created, because it depends on compression size,
+			// otherwise an exception will throw out:
+			// Exception: invalid entry compressed size (expected <size> but got <size> bytes)
+			zipEntry = new ZipEntry(zipEntry);
+			zipEntry.setCompressedSize(-1);
 
 			InputStream zipEntryInputStream;
 			if (zipEntry.getName().endsWith("a1.txt")) {
