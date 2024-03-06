@@ -139,3 +139,30 @@ Several comments:
 2. The general process to update an zip file is to create a temporary file, and write all contents into that file, and finally move the temporary file to target zip file.
    And if the zip file isn't too big, the temporary file can be kept in memory, and then output to disk when finish.
 3. This sample can also be used to handle jar file, because jar file has same API with zip, except change ZipXXX functions/types to JarXXX functions/types.
+
+This is a sample of handle a jar file:
+```
+public InputStream update_jarfile(InputStream jarfileInputStream) throws IOException {
+    JarInputStream inJarInputStream = new JarInputStream(jarfileInputStream);
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    JarOutputStream outJarOutputStream = new JarOutputStream(outputStream);
+
+    JarEntry jarEntry;
+    while ((jarEntry = inJarInputStream.getNextJarEntry()) != null) {
+        if (jarEntry.getName().equals("<some-value>") {
+            // TODO
+        }
+	    		
+        outJarOutputStream.putNextEntry(jarEntry);
+        byte[] buffer = new byte[1024];
+        int bytesRead = 0;
+        while ((bytesRead = inJarInputStream.read(buffer)) != -1) {
+            outJarOutputStream.write(buffer, 0, bytesRead);
+        }
+        outJarOutputStream.closeEntry();
+    }
+        
+    outJarOutputStream.close();
+    return new ByteArrayInputStream(outputStream.toByteArray());
+}
+```
